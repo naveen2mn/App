@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f7fb">
+  <title>Household Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="NPRK Planner home">
+        <span class="brand-mark" aria-hidden="true">N</span>
+        <span>NPRK<span class="brand-period">.</span></span>
+      </a>
+      <div class="topbar-note"><span class="live-dot"></span> Your home, thoughtfully planned</div>
+    </header>
+
+    <section class="hero">
+      <div>
+        <p class="eyebrow">THE HOUSEHOLD EDIT</p>
+        <h1>A little more organized.<br><span>A lot more at home.</span></h1>
+        <p class="hero-copy">Keep every home purchase in one place, from the little essentials to the big plans.</p>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="art-sun"></div><div class="art-window"><i></i><i></i><i></i><i></i></div>
+        <div class="art-plant"><b></b><b></b><b></b><b></b><span></span></div>
+        <div class="art-sofa"><i></i><i></i><b></b></div>
+        <div class="art-table"></div><div class="art-vase"></div>
+      </div>
+    </section>
+
+    <section class="summary-grid" aria-label="Shopping summary">
+      <article class="summary-card budget-card">
+        <div class="summary-top"><span class="summary-label">ESTIMATED BUDGET</span><span class="summary-icon">↗</span></div>
+        <strong id="estimatedTotal">₹0</strong>
+        <span class="summary-foot">Across your whole home</span>
+      </article>
+      <article class="summary-card purchased-card">
+        <div class="summary-top"><span class="summary-label">PURCHASED SO FAR</span><span class="summary-icon">✓</span></div>
+        <strong id="purchasedTotal">₹0</strong>
+        <span class="summary-foot"><span id="purchasedCount">0</span> items checked off</span>
+      </article>
+      <article class="summary-card progress-card">
+        <div class="summary-top"><span class="summary-label">HOME PROGRESS</span><span class="summary-icon">⌂</span></div>
+        <strong><span id="progressPercent">0</span><small>%</small></strong>
+        <div class="progress-track"><span id="progressBar"></span></div>
+      </article>
+    </section>
+
+    <section class="priority-section" aria-labelledby="priorityHeading">
+      <div class="section-heading priority-heading">
+        <div><p class="eyebrow">PLAN YOUR SPEND</p><h2 id="priorityHeading">Budget by priority</h2></div>
+        <span class="section-hint">Estimated cost · quantity included</span>
+      </div>
+      <div class="priority-grid" id="prioritySummary"></div>
+    </section>
+
+    <section class="list-section" aria-labelledby="listHeading">
+      <div class="section-heading list-heading">
+        <div><p class="eyebrow">YOUR LIST</p><h2 id="listHeading">Make room for what matters</h2></div>
+        <div class="heading-actions">
+          <button class="button button-outline" id="addCategoryButton" type="button"><span aria-hidden="true">＋</span> New category</button>
+          <button class="button button-primary" id="addItemButton" type="button"><span aria-hidden="true">＋</span> Add an item</button>
+        </div>
+      </div>
+
+      <nav id="categoryTabs" class="category-tabs" role="tablist" aria-label="Filter list by category"></nav>
+
+      <div class="toolbar">
+        <label class="search-box"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Search your list..." aria-label="Search items"></label>
+        <label class="filter-label">PRIORITY
+          <select id="priorityFilter" aria-label="Filter by priority">
+            <option value="all">All priorities</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
+        </label>
+        <label class="filter-label">SORT BY
+          <select id="sortFilter" aria-label="Sort items">
+            <option value="category">Category</option>
+            <option value="priority">Priority</option>
+            <option value="cost-high">Highest cost</option>
+            <option value="cost-low">Lowest cost</option>
+            <option value="name">Name</option>
+          </select>
+        </label>
+        <label class="purchased-filter"><input id="hidePurchased" type="checkbox"> Hide purchased</label>
+      </div>
+
+      <div id="categoryGroups" class="table-wrap"></div>
+      <div id="emptyState" class="empty-state" hidden>
+        <span class="empty-icon" aria-hidden="true">✳</span>
+        <h3>No items found</h3>
+        <p>Try changing your filters, or add something to your list.</p>
+        <button class="button button-primary" id="emptyAddButton" type="button">Add your first item</button>
+      </div>
+      <footer class="list-footer"><span id="itemCount">0 items</span><button class="text-button" id="exportButton" type="button">Export your list <span aria-hidden="true">↗</span></button></footer>
+    </section>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </main>
+
+  <dialog id="itemDialog" class="form-dialog">
+    <form id="itemForm">
+      <div class="dialog-heading"><div><p class="eyebrow">YOUR HOME, YOUR WAY</p><h2 id="itemDialogTitle">Add an item</h2></div><button class="close-button" type="button" data-close="itemDialog" aria-label="Close">×</button></div>
+      <input id="itemId" type="hidden">
+      <label class="field-label">Item name<input id="itemName" name="name" required maxlength="70" placeholder="e.g. Linen duvet set"></label>
+      <div class="field-row">
+        <label class="field-label">Category<select id="itemCategory" name="categoryId" required></select></label>
+        <label class="field-label">Priority<select id="itemPriority" name="priority"><option>High</option><option selected>Medium</option><option>Low</option></select></label>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Quantity<input id="itemQuantity" name="quantity" type="number" min="1" step="1" value="1" required></label>
+        <label class="field-label">Estimated cost <span class="input-prefix"><span>₹</span><input id="itemCost" name="cost" type="number" min="0" step="0.01" value="0" required></span></label>
+      </div>
+      <label class="field-label">Actual cost <span class="optional">(optional, per item)</span><span class="input-prefix"><span>₹</span><input id="itemActualCost" name="actualCost" type="number" min="0" step="0.01" placeholder="Not purchased yet"></span></label>
+      <label class="check-field"><input id="itemPurchased" name="purchased" type="checkbox"><span>Mark as purchased</span></label>
+      <div class="dialog-actions"><button class="button button-outline" type="button" data-close="itemDialog">Cancel</button><button class="button button-primary" type="submit">Save item</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="categoryDialog" class="form-dialog">
+    <form id="categoryForm">
+      <div class="dialog-heading"><div><p class="eyebrow">A PLACE FOR EVERYTHING</p><h2 id="categoryDialogTitle">New category</h2></div><button class="close-button" type="button" data-close="categoryDialog" aria-label="Close">×</button></div>
+      <input id="categoryId" type="hidden">
+      <label class="field-label">Category name<input id="categoryName" name="name" required maxlength="40" placeholder="e.g. Living room"></label>
+      <div class="dialog-actions"><button class="button button-outline" type="button" data-close="categoryDialog">Cancel</button><button class="button button-primary" type="submit">Save category</button></div>
+    </form>
+  </dialog>
+  <script src="app.js"></script>
+</body>
+</html>
